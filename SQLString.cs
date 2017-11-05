@@ -198,7 +198,7 @@ namespace PaperSystem
             }
 
 
-            //store a record to table QuestionMode(非另存新題)
+            //store a record to table QuestionMode(If it's not 另存新題)
             else
             {
                 
