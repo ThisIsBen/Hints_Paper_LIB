@@ -51,7 +51,7 @@ namespace PaperSystem
         /// <param name="strQuestionDivisionID"></param>
         /// <param name="strQuestionGroupID"></param>
         /// <param name="strQuestionMode"></param>
-        public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode)
+        public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string templateQuestionQID = null)
         {
             //儲存一筆資料至QuestionIndex 
             saveIntoQuestionIndex(strQID, strQuestion, strAnswer, 1);
@@ -64,7 +64,7 @@ namespace PaperSystem
 
             //儲存一筆資料至QuestionMode
             SQLString mySQL = new SQLString();
-            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "2");
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "2", templateQuestionQID, strUserID);
         }
         /// <summary>
         /// 儲存編輯問答題網頁上的一題問答題資料 新問答題兩張資料表 QuestionAnswer_Question  QuestionAnswer_Answer

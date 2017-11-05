@@ -2,6 +2,7 @@ using System;
 using suro.util;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 
 namespace PaperSystem
 {
@@ -105,38 +106,132 @@ namespace PaperSystem
         /// <param name="strQuestionGroupID"></param>
         /// <param name="strQuestionMode"></param>
         /// <param name="strQuestionType"></param>
-        public void saveIntoQuestionMode(string strQID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string strQuestionType)
+        /// <param name="templateQuestionQID"></param>
+        /// <param name="strUserID"></param>
+        public void saveIntoQuestionMode(string strQID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string strQuestionType, string templateQuestionQID = null, string strUserID=null)
         {
+            string strSQL = "";
             //取得QuestionGroupName
             string strQuestionGroupName = DataReceiver.getQuestionGroupNameByQuestionGroupID(strQuestionGroupID);
 
-            string strSQL = " SELECT * FROM QuestionMode" +
-                            " WHERE cQID = '" + strQID + "' ";
 
-            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
-            DataSet dsCheck = myDB.getDataSet(strSQL);
-
-
-            //Do nothing if there is an existing question with the same cQID in QuestionMode table.
-            if (dsCheck.Tables[0].Rows.Count > 0)
+            //if teacher save the edited question as a new question
+            //add similarID to the new question to show all the related similar question when the teacher picks one of the parent or offspring of this new question.
+            if (templateQuestionQID != null && strUserID != null)
             {
-                // 先註解，因為將QuestionMode資料表的QID欄位的Primary Key拿掉，所以若執行此Update會導致有重複筆資料。(功能上是為了可以將一題對話題放入不同的問題主題中。)  老詹 2015/09/06
-                /*{
-                    //Update
-                    strSQL = " UPDATE QuestionMode SET cPaperID = '" + strPaperID + "' , cDivisionID = '" + strQuestionDivisionID + "' , cQuestionGroupID = '" + strQuestionGroupID + "' , cQuestionGroupName = '" + strQuestionGroupName + "' , cQuestionMode = '" + strQuestionMode + "' , cQuestionType = '" + strQuestionType + "' " +
-                            " WHERE cQID = '" + strQID + "' ";
-                }*/
+                //to contain similarID to assign to the new question
+                string similarID = "";
+                //Ben check whether the the value of “similarID”of the question that is used as a template is null or not.
+                strSQL = " SELECT similarID FROM QuestionMode" +
+                                " WHERE cQID = '" + templateQuestionQID + "' and cQuestionType= '" + strQuestionType + "' and similarID IS NOT NULL";
+
+                SqlDB QuestionModeDB = new SqlDB(System.Configuration.ConfigurationManager.AppSettings["connstr"]);
+                DataSet similarIDCheck = QuestionModeDB.getDataSet(strSQL);
+
+
+
+                //If the question that is used as a template already has similarID in QuestionMode table.
+                if (similarIDCheck.Tables[0].Rows.Count > 0)
+                {
+                    //set similarID the same as the that of the question that is used as a template
+                    similarID = similarIDCheck.Tables[0].Rows[0]["similarID"].ToString();
+                }
+
+                //If the question that is used as a template doesn't have similarID in QuestionMode table.
+                else
+                {
+                    //set new similarID to the template question and the new question.
+                    DataReceiver myReceiver = new DataReceiver();
+                    similarID = strUserID + "_simiID_" + myReceiver.getNowTime();
+
+                    //assign the new similarID to the question that is used as a template
+                    //Update similarID of the template question
+                    strSQL = " UPDATE QuestionMode SET similarID = '" + similarID + "'  WHERE cQID = '" + templateQuestionQID + "' and cQuestionType='" + strQuestionType + "'";
+
+                    
+                    QuestionModeDB.ExecuteNonQuery(strSQL);
+
+                    //strSQL = " UPDATE QuestionMode SET cPaperID = '" + strPaperID + "' , cDivisionID = '" + strQuestionDivisionID + "' , cQuestionGroupID = '" + strQuestionGroupID + "' , cQuestionGroupName = '" + strQuestionGroupName + "' , cQuestionMode = '" + strQuestionMode + "' , cQuestionType = '" + strQuestionType + "' " +
+                    //            " WHERE cQID = '" + strQID + "' ";
+                }
+                similarIDCheck.Dispose();
+                
+
+                
+
+                //store similarID along with all other related data to table QuestionMode
+                strSQL = " SELECT * FROM QuestionMode" +
+                                " WHERE cQID = '" + strQID + "' ";
+
+                SqlDB myDB = new SqlDB(System.Configuration.ConfigurationManager.AppSettings["connstr"]);
+                DataSet dsCheck = myDB.getDataSet(strSQL);
+
+
+                //Do nothing if there is an existing question with the same cQID in QuestionMode table.
+                if (dsCheck.Tables[0].Rows.Count > 0)
+                {
+                    // 先註解，因為將QuestionMode資料表的QID欄位的Primary Key拿掉，所以若執行此Update會導致有重複筆資料。(功能上是為了可以將一題對話題放入不同的問題主題中。)  老詹 2015/09/06
+                    /*{
+                        //Update
+                        strSQL = " UPDATE QuestionMode SET cPaperID = '" + strPaperID + "' , cDivisionID = '" + strQuestionDivisionID + "' , cQuestionGroupID = '" + strQuestionGroupID + "' , cQuestionGroupName = '" + strQuestionGroupName + "' , cQuestionMode = '" + strQuestionMode + "' , cQuestionType = '" + strQuestionType + "' " +
+                                " WHERE cQID = '" + strQID + "' ";
+                    }*/
+                }
+
+                //Insert the new question to QuestionMode table, if there is no existing questions with the same cQID.
+                else
+                {
+                    //Insert
+                    strSQL = " INSERT INTO QuestionMode (cQID , cPaperID , cDivisionID , cQuestionGroupID , cQuestionGroupName , cQuestionMode , cQuestionType,similarID) " +
+                            " VALUES ('" + strQID + "' , '" + strPaperID + "' , '" + strQuestionDivisionID + "' , '" + strQuestionGroupID + "' , '" + strQuestionGroupName + "' , '" + strQuestionMode + "' , '" + strQuestionType + "' , '" + similarID + "') ";
+                    /*
+                    //to inspect the SQL cmd when something went wrong with SQL cmd 
+                    // Create a file to write to.              
+                    File.WriteAllText("D:/Hints_on_60/Hints/App_Code/AuthoringTool/CaseEditor/Paper/updateSimilarIDSQL.txt", strSQL);
+                    */
+                
+                }
+                dsCheck.Dispose();
+                myDB.ExecuteNonQuery(strSQL);
+
+
             }
 
-            //Insert the new question to QuestionMode table, if there is no existing questions with the same cQID.
+
+            //store a record to table QuestionMode(非另存新題)
             else
             {
-                //Insert
-                strSQL = " INSERT INTO QuestionMode (cQID , cPaperID , cDivisionID , cQuestionGroupID , cQuestionGroupName , cQuestionMode , cQuestionType) " +
-                        " VALUES ('" + strQID + "' , '" + strPaperID + "' , '" + strQuestionDivisionID + "' , '" + strQuestionGroupID + "' , '" + strQuestionGroupName + "' , '" + strQuestionMode + "' , '" + strQuestionType + "') ";
+                
+                strSQL = " SELECT * FROM QuestionMode" +
+                                " WHERE cQID = '" + strQID + "' ";
+
+                SqlDB myDB = new SqlDB(System.Configuration.ConfigurationManager.AppSettings["connstr"]);
+                DataSet dsCheck = myDB.getDataSet(strSQL);
+
+
+                //Do nothing if there is an existing question with the same cQID in QuestionMode table.
+                if (dsCheck.Tables[0].Rows.Count > 0)
+                {
+                    // 先註解，因為將QuestionMode資料表的QID欄位的Primary Key拿掉，所以若執行此Update會導致有重複筆資料。(功能上是為了可以將一題對話題放入不同的問題主題中。)  老詹 2015/09/06
+                    /*{
+                        //Update
+                        strSQL = " UPDATE QuestionMode SET cPaperID = '" + strPaperID + "' , cDivisionID = '" + strQuestionDivisionID + "' , cQuestionGroupID = '" + strQuestionGroupID + "' , cQuestionGroupName = '" + strQuestionGroupName + "' , cQuestionMode = '" + strQuestionMode + "' , cQuestionType = '" + strQuestionType + "' " +
+                                " WHERE cQID = '" + strQID + "' ";
+                    }*/
+                }
+
+                //Insert the new question to QuestionMode table, if there is no existing questions with the same cQID.
+                else
+                {
+                    //Insert
+                    strSQL = " INSERT INTO QuestionMode (cQID , cPaperID , cDivisionID , cQuestionGroupID , cQuestionGroupName , cQuestionMode , cQuestionType) " +
+                            " VALUES ('" + strQID + "' , '" + strPaperID + "' , '" + strQuestionDivisionID + "' , '" + strQuestionGroupID + "' , '" + strQuestionGroupName + "' , '" + strQuestionMode + "' , '" + strQuestionType + "') ";
+                }
+                dsCheck.Dispose();
+                //insert record to table QuestionMode 
+                myDB.ExecuteNonQuery(strSQL);
             }
-            dsCheck.Dispose();
-            myDB.ExecuteNonQuery(strSQL);
+           
         }
 
         /// <summary>
