@@ -37,7 +37,7 @@ namespace PaperSystem
 
 			//儲存一筆資料至QuestionMode
 			SQLString mySQL = new SQLString();
-			mySQL.saveIntoQuestionMode(strQID , strPaperID , strQuestionDivisionID , strQuestionGroupID , strQuestionMode , "2");
+			mySQL.saveIntoQuestionMode(strQID , strPaperID , strQuestionDivisionID , strQuestionGroupID , strQuestionMode , "2",null,null);
 		}
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace PaperSystem
 
             //儲存一筆資料至QuestionMode
             SQLString mySQL = new SQLString();
-            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "2");
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "2", null, null);
         }
         /// <summary>
         /// 儲存編輯問答題網頁上的一題問答題資料 新問答題兩張資料表 QuestionAnswer_Question  QuestionAnswer_Answer
@@ -87,7 +87,7 @@ namespace PaperSystem
 
             //儲存一筆資料至QuestionMode  //###with parameter "strQuestionType" set to 7 in 程式題,which is defined in Paper_QuestionTypeNew.aspx to represent the  QuestionType of  程式題
             SQLString mySQL = new SQLString();
-            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "7");
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "7", null, null);
 
             //#######write your code below
 
@@ -245,7 +245,7 @@ namespace PaperSystem
             //saveIntoQuestionSimulator(strQID, strAnswer, strOrder, strSimulatorID);
             //儲存一筆資料至QuestionMode  strPaperID=NULL strQuestionDivisionID="" strQuestionGroupID, strQuestionMode=Session
             SQLString mySQL = new SQLString();
-            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "3");
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "3", null, null);
         }
 
         /// <summary>

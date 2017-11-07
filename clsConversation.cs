@@ -253,7 +253,7 @@ namespace Hints.DB.Conversation
 
             //儲存一筆資料至QuestionMode
             SQLString mySQL = new SQLString();
-            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "4");
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "4",null,null);
 
             //儲存一筆資料至QuestionAnswer_Question
             saveIntoConversation_Question(strQID, strQuestion);

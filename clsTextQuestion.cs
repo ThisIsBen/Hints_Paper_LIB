@@ -37,7 +37,8 @@ namespace PaperSystem
 
 			//儲存一筆資料至QuestionMode
 			SQLString mySQL = new SQLString();
-			mySQL.saveIntoQuestionMode(strQID , strPaperID , strQuestionDivisionID , strQuestionGroupID , strQuestionMode , "2");
+            //ben
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "2", null, null);
 		}
 
         /// <summary>
@@ -51,7 +52,9 @@ namespace PaperSystem
         /// <param name="strQuestionDivisionID"></param>
         /// <param name="strQuestionGroupID"></param>
         /// <param name="strQuestionMode"></param>
-        public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string templateQuestionQID = null)
+        public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string templateQuestionQID )
+        //ben 
+        //public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string templateQuestionQID = null)
         {
             //儲存一筆資料至QuestionIndex 
             saveIntoQuestionIndex(strQID, strQuestion, strAnswer, 1);
@@ -86,7 +89,8 @@ namespace PaperSystem
             
             //儲存一筆資料至QuestionMode
             SQLString mySQL = new SQLString();
-            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "7");
+            //ben
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "7", null, null);
 
 
             // store question description to DB
@@ -234,7 +238,8 @@ namespace PaperSystem
             //saveIntoQuestionSimulator(strQID, strAnswer, strOrder, strSimulatorID);
             //儲存一筆資料至QuestionMode  strPaperID=NULL strQuestionDivisionID="" strQuestionGroupID, strQuestionMode=Session
             SQLString mySQL = new SQLString();
-            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "3");
+            //ben
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "3", null, null);
         }
 
         /// <summary>

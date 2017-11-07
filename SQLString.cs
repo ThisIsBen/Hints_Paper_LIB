@@ -108,7 +108,9 @@ namespace PaperSystem
         /// <param name="strQuestionType"></param>
         /// <param name="templateQuestionQID"></param>
         /// <param name="strUserID"></param>
-        public void saveIntoQuestionMode(string strQID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string strQuestionType, string templateQuestionQID = null, string strUserID=null)
+        public void saveIntoQuestionMode(string strQID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string strQuestionType, string templateQuestionQID, string strUserID)
+        //ben
+        //public void saveIntoQuestionMode(string strQID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string strQuestionType, string templateQuestionQID = null, string strUserID=null)
         {
             string strSQL = "";
             //¨ú±oQuestionGroupName
@@ -184,7 +186,7 @@ namespace PaperSystem
                     //Insert
                     strSQL = " INSERT INTO QuestionMode (cQID , cPaperID , cDivisionID , cQuestionGroupID , cQuestionGroupName , cQuestionMode , cQuestionType,similarID) " +
                             " VALUES ('" + strQID + "' , '" + strPaperID + "' , '" + strQuestionDivisionID + "' , '" + strQuestionGroupID + "' , '" + strQuestionGroupName + "' , '" + strQuestionMode + "' , '" + strQuestionType + "' , '" + similarID + "') ";
-                    /*
+                    /*write SQL to file to 
                     //to inspect the SQL cmd when something went wrong with SQL cmd 
                     // Create a file to write to.              
                     File.WriteAllText("D:/Hints_on_60/Hints/App_Code/AuthoringTool/CaseEditor/Paper/updateSimilarIDSQL.txt", strSQL);
@@ -2317,6 +2319,8 @@ namespace PaperSystem
                 //Update
                 strSQL = " UPDATE Paper_Content SET  sStandardScore = '"+strStandardScore+"' , cQuestionType = '"+strQuestionType+"' , cQuestionMode = '"+strQuestionMode+"' , cQuestion = @cQuestion , sSeq = '"+strSeq+"' "+
                          " WHERE cPaperID = '"+strPaperID+"' AND cQID = '"+strQID+"' ";
+
+               
             }
             else
             {
@@ -2353,6 +2357,9 @@ namespace PaperSystem
                 //Update
                 strSQL = " UPDATE Paper_Content SET  sStandardScore = '" + strStandardScore + "' , cQuestionType = '" + strQuestionType + "' , cQuestionMode = '" + strQuestionMode + "' , sSeq = '" + strSeq + "' " +
                     " WHERE cPaperID = '" + strPaperID + "' AND cQID = '" + strQID + "' ";
+
+
+                
             }
             else
             {
@@ -2360,6 +2367,13 @@ namespace PaperSystem
                 strSQL = " INSERT INTO Paper_Content (cPaperID , cQID , sStandardScore , cQuestionType , cQuestionMode , sSeq) " +
                     " VALUES ('" + strPaperID + "' , '" + strQID + "'  ,'" + strStandardScore + "'  ,'" + strQuestionType + "'  ,'" + strQuestionMode + "'  ,'" + strSeq + "')";
             }
+
+            /*write SQL to file to 
+            //to inspect the SQL cmd when something went wrong with SQL cmd 
+            // Create a file to write to.              
+            //File.WriteAllText("D:/Hints_on_60/Hints/App_Code/AuthoringTool/CaseEditor/Paper/updateSimilarIDSQL.txt", strSQL);
+            */
+
             dsQuestion.Dispose();
             try
             {
