@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using suro.util;
 using AuthoringTool.QuestionEditLevel;
+using System.Collections.Generic;
 
 namespace AuthoringTool.CommonQuestionEdit
 {
@@ -169,6 +170,9 @@ namespace AuthoringTool.CommonQuestionEdit
 				ret += " "+FieldName+"='"+FieldConditionValue+"' AND ";
 			}
 			ret = ret.Remove(ret.LastIndexOf("AND"),4);//將最後一個"AND"字串移除
+
+
+            
 		    return ret;
 		}
 
@@ -421,23 +425,61 @@ namespace AuthoringTool.CommonQuestionEdit
 		/// </summary>
 		public void update_QuestionSource_In_Database()
 		{
-			string delete_SQL = "DELETE " + QuestionDataTableName + getQIDWhereString();
+            //Ben Don't delete the record with similarID presented
+            //string delete_SQL = "DELETE " + QuestionDataTableName + getQIDWhereString();
+            string delete_SQL = "";
+            if (QuestionDataTableName == "QuestionMode")
+            {
+                 delete_SQL= "DELETE " + QuestionDataTableName + getQIDWhereString() +" AND similarID IS NULL";
+            }
+            else{
+                delete_SQL= "DELETE " + QuestionDataTableName + getQIDWhereString();
+            }
 			sqldb.ExecuteNonQuery(delete_SQL);
 			string strSQL = "SELECT * FROM " + this.QuestionDataTableName + " WHERE 1=0";
 			DataTable dt = sqldb.getDataSet(strSQL).Tables[0];
+
+
+
+            //Ben to contain all the cQID that has similarID 
+            List<string> list_QIDWithSimilarID = new List<string>();
+           
+            //Ben select all the cQID that has similarID 
+            string strSelectQIDWithSimilarIDSQL = "SELECT cQID FROM " + this.QuestionDataTableName + " WHERE similarID IS NOT NULL";
+            DataTable dtQIDWithSimilarID = sqldb.getDataSet(strSelectQIDWithSimilarIDSQL).Tables[0];
+
+            for (int i = 0; i < dtQIDWithSimilarID.Rows.Count; i++)
+            {
+                //add all the cQID that has similarID  to a list
+                list_QIDWithSimilarID.Add(dtQIDWithSimilarID.Rows[i]["cQID"].ToString());
+            }
+                
+
+
 			ArrayList FieldIndex = (ArrayList)searchQuestionCondition["FieldIndex"];
 			string field = "";
 			DataRow new_Dr = null;
 			foreach(DataRow dr in QuestionIndex.Rows)
 			{
-				new_Dr = dt.NewRow();
-				for(int i=0;i<FieldIndex.Count;i++)
-				{
-					field = FieldIndex[i].ToString();//欄位名稱
-					new_Dr[field] = searchQuestionCondition[field].ToString();
-				}
-				new_Dr[QID_Relation_Field] = dr["cQID"].ToString();
-				dt.Rows.Add(new_Dr);
+
+                //insert the record whose cQID is not in the  list_QIDWithSimilarID list
+
+                bool hasSimilarID = list_QIDWithSimilarID.Exists(QIDWithSimilarID => QIDWithSimilarID == dr["cQID"].ToString());
+
+                //only update the records that don't have similarID
+                if (!hasSimilarID)
+                {
+                    new_Dr = dt.NewRow();
+                    for (int i = 0; i < FieldIndex.Count; i++)
+                    {
+                        field = FieldIndex[i].ToString();//欄位名稱
+                        new_Dr[field] = searchQuestionCondition[field].ToString();
+                    }
+
+
+                    new_Dr[QID_Relation_Field] = dr["cQID"].ToString();
+                    dt.Rows.Add(new_Dr);
+                }
 			}
 			sqldb.Update(dt,"SELECT * FROM " + this.QuestionDataTableName);
 		}
