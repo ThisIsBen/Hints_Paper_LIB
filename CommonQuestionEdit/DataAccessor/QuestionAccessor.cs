@@ -753,6 +753,13 @@ namespace AuthoringTool.CommonQuestionEdit
             sqldb.ExecuteNonQuery(strSQL);
         }
 
+        public void QuestionIndex_INSERT_ForKeywordsSelection(string strQID, string strQuestion,string keywords)
+        {
+            string strSQL = "INSERT INTO QuestionIndex (cQID, cQuestion, sLevel, cAnswer,cKeyWords) " +
+                "VALUES ('" + strQID + "', '" + strQuestion + "', '1', '', '"+keywords+"')";
+            sqldb.ExecuteNonQuery(strSQL);
+        }
+
         public void QuestionSelectionIndex_INSERT(string strQID, string strSelectionID, int iSeq, string strAnswer, string strResponse, int iCaseSelect)
         {
             string strSQL_SELECT = "SELECT bCaseSelect FROM QuestionSelectionIndex WHERE cQID = '" + strQID + "' AND cSelectionID = '" + strSelectionID + "'";

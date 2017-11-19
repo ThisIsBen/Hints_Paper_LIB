@@ -123,8 +123,10 @@ namespace PaperSystem
             {
                 //to contain similarID to assign to the new question
                 string similarID = "";
+                string TemplateQuesQuestionGroupID = "";
+                string TemplateQuesQuestionGroupName = "";
                 //Ben check whether the the value of ¡§similarID¡¨of the question that is used as a template is null or not.
-                strSQL = " SELECT similarID FROM QuestionMode" +
+                strSQL = " SELECT similarID ,cQuestionGroupID,cQuestionGroupName FROM QuestionMode" +
                                 " WHERE cQID = '" + templateQuestionQID + "' and cQuestionType= '" + strQuestionType + "' and similarID IS NOT NULL";
 
                 SqlDB QuestionModeDB = new SqlDB(System.Configuration.ConfigurationManager.AppSettings["connstr"]);
@@ -137,11 +139,18 @@ namespace PaperSystem
                 {
                     //set similarID the same as the that of the question that is used as a template
                     similarID = similarIDCheck.Tables[0].Rows[0]["similarID"].ToString();
+
+                    //get the cQuestionGroupName and cQuestionGroupID of the template question
+                    TemplateQuesQuestionGroupID = similarIDCheck.Tables[0].Rows[0]["cQuestionGroupID"].ToString();
+                    TemplateQuesQuestionGroupName = similarIDCheck.Tables[0].Rows[0]["cQuestionGroupName"].ToString();
+
+
                 }
 
                 //If the question that is used as a template doesn't have similarID in QuestionMode table.
                 else
                 {
+
                     //set new similarID to the template question and the new question.
                     DataReceiver myReceiver = new DataReceiver();
                     similarID = strUserID + "_simiID_" + myReceiver.getNowTime();
@@ -153,10 +162,42 @@ namespace PaperSystem
                     
                     QuestionModeDB.ExecuteNonQuery(strSQL);
 
-                    //strSQL = " UPDATE QuestionMode SET cPaperID = '" + strPaperID + "' , cDivisionID = '" + strQuestionDivisionID + "' , cQuestionGroupID = '" + strQuestionGroupID + "' , cQuestionGroupName = '" + strQuestionGroupName + "' , cQuestionMode = '" + strQuestionMode + "' , cQuestionType = '" + strQuestionType + "' " +
-                    //            " WHERE cQID = '" + strQID + "' ";
+                   
+
+
+                    //strQuestionGroupID and strQuestionGroupName are all empty, just get these fields from the template question.
+                    if (strQuestionGroupID == "" && strQuestionGroupName == "")
+                    {
+                        //get the cQuestionGroupName and cQuestionGroupID of the template question
+                        strSQL = " SELECT cQuestionGroupID,cQuestionGroupName FROM QuestionMode" +
+                                  " WHERE cQID = '" + templateQuestionQID + "' and cQuestionType= '" + strQuestionType + "' and similarID IS NOT NULL";
+
+
+                        DataSet QuestionGroupCheck = QuestionModeDB.getDataSet(strSQL);
+
+                        //If the question that is used as a template already has similarID in QuestionMode table.
+                        if (QuestionGroupCheck.Tables[0].Rows.Count > 0)
+                        {
+                            //set similarID the same as the that of the question that is used as a template
+                            similarID = QuestionGroupCheck.Tables[0].Rows[0]["similarID"].ToString();
+
+                            //get the cQuestionGroupName and cQuestionGroupID of the template question
+                            TemplateQuesQuestionGroupID = QuestionGroupCheck.Tables[0].Rows[0]["cQuestionGroupID"].ToString();
+                            TemplateQuesQuestionGroupName = QuestionGroupCheck.Tables[0].Rows[0]["cQuestionGroupName"].ToString();
+
+
+                        }
+                        QuestionGroupCheck.Dispose();
+                    }
+
+                    else//use the GroupID passed by parameter in to this function and the corresponding GroupName for the new question
+                    {
+                        TemplateQuesQuestionGroupID=strQuestionGroupID;
+                        TemplateQuesQuestionGroupName = strQuestionGroupName;
+                    }
                 }
                 similarIDCheck.Dispose();
+               
                 
 
                 
@@ -185,7 +226,7 @@ namespace PaperSystem
                 {
                     //Insert
                     strSQL = " INSERT INTO QuestionMode (cQID , cPaperID , cDivisionID , cQuestionGroupID , cQuestionGroupName , cQuestionMode , cQuestionType,similarID) " +
-                            " VALUES ('" + strQID + "' , '" + strPaperID + "' , '" + strQuestionDivisionID + "' , '" + strQuestionGroupID + "' , '" + strQuestionGroupName + "' , '" + strQuestionMode + "' , '" + strQuestionType + "' , '" + similarID + "') ";
+                            " VALUES ('" + strQID + "' , '" + strPaperID + "' , '" + strQuestionDivisionID + "' , '" + TemplateQuesQuestionGroupID + "' , '" + strQuestionGroupName + "' , '" + strQuestionMode + "' , '" + strQuestionType + "' , '" + similarID + "') ";
                     /*write SQL to file to 
                     //to inspect the SQL cmd when something went wrong with SQL cmd 
                     // Create a file to write to.              
