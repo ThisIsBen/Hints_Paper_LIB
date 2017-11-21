@@ -1,45 +1,50 @@
 using System;
 using System.Data;
+using System.Collections.Generic;
+using System.Web;
 using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using System.Web.UI;
 using suro.util;
-
+using System.IO;
+using System.Web.UI.DataVisualization.Charting;
 
 namespace PaperSystem
 {
-	/// <summary>
-	/// clsTextQuestion 的摘要描述。
-	/// </summary>
-	public class clsProgramQuestion
+    /// <summary>
+    /// clsTextQuestion 的摘要描述。
+    /// </summary>
+    public class clsProgramQuestion
     {
-		public clsProgramQuestion()
-		{
-			//
-			// TODO: 在此加入建構函式的程式碼
-			//
-		}
-
-		/// <summary>
-		/// 儲存編輯問答題網頁上的一題問答題資料
-		/// </summary>
-		/// <param name="WebPage"></param>
-		/// <param name="strPaperID"></param>
-		/// <param name="strGroupDivisionID"></param>
-		/// <param name="strGroupID"></param>
-		/// <param name="strQuestionMode"></param>
-		public void saveTextQuestion(string strQID , string strQuestion , string strAnswer ,  string strUserID , string strPaperID , string strQuestionDivisionID , string strQuestionGroupID , string strQuestionMode)
-		{
+        public clsProgramQuestion()
+        {
+            //
+            // TODO: 在此加入建構函式的程式碼
+            //
+        }
+        string QuestionAnswerfilePath = HttpContext.Current.Server.MapPath("~/ProgramQuestion/");
+        public static string segmentsCut = "aeiouSeparateAEIOU";
+        /// <summary>
+        /// 儲存編輯問答題網頁上的一題問答題資料
+        /// </summary>
+        /// <param name="WebPage"></param>
+        /// <param name="strPaperID"></param>
+        /// <param name="strGroupDivisionID"></param>
+        /// <param name="strGroupID"></param>
+        /// <param name="strQuestionMode"></param>
+      /*  public void saveTextQuestion(string strQID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode)
+        {
             //儲存一筆資料至QuestionIndex
-            saveIntoQuestionIndex(strQID, strQuestion,strAnswer, 1);
+            //saveIntoQuestionIndex(strQID, strQuestion, strAnswer, 1);
 
-			//儲存一筆資料至Paper_TextQuestion
-			saveIntoPaper_TextQuestion(strQID , strQuestion, strAnswer , 1);
+            //儲存一筆資料至Paper_TextQuestion
+            saveIntoPaper_TextQuestion(strQID, strQuestion, strAnswer, 1);
 
-			//儲存一筆資料至QuestionMode
-			SQLString mySQL = new SQLString();
-			mySQL.saveIntoQuestionMode(strQID , strPaperID , strQuestionDivisionID , strQuestionGroupID , strQuestionMode , "2",null,null);
-		}
-
+            //儲存一筆資料至QuestionMode
+            SQLString mySQL = new SQLString();
+            mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "2", null, null);
+        }
+        */
         /// <summary>
         /// 儲存編輯問答題網頁上的一題問答題資料 新問答題兩張資料表 QuestionAnswer_Question  QuestionAnswer_Answer
         /// </summary>
@@ -51,21 +56,21 @@ namespace PaperSystem
         /// <param name="strQuestionDivisionID"></param>
         /// <param name="strQuestionGroupID"></param>
         /// <param name="strQuestionMode"></param>
-        public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode)
+       /* public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode)
         {
             //儲存一筆資料至QuestionIndex 
             saveIntoQuestionIndex(strQID, strQuestion, strAnswer, 1);
 
             //儲存一筆資料至QuestionAnswer_Question
-            saveIntoQuestionAnswer_Question(strQID, strQuestion);
+            saveIntoProgram_Question(strQID, strQuestion, strQID);
 
             //儲存一筆資料至QuestionAnswer_Answer
-            saveIntoQuestionAnswer_Answer(strQID, strAID, strAnswer);
+            saveIntoProgram_Answer(strQID, strAnswer,strQID);
 
             //儲存一筆資料至QuestionMode
             SQLString mySQL = new SQLString();
             mySQL.saveIntoQuestionMode(strQID, strPaperID, strQuestionDivisionID, strQuestionGroupID, strQuestionMode, "2", null, null);
-        }
+        }*/
         /// <summary>
         /// 儲存編輯問答題網頁上的一題問答題資料 新問答題兩張資料表 QuestionAnswer_Question  QuestionAnswer_Answer
         /// </summary>
@@ -79,7 +84,7 @@ namespace PaperSystem
         /// <param name="strQuestionMode"></param>
         /// <param name="strTextTestDataContent"></param>
         /// <param name="strTextOutputFormatContent"></param>
-        public void saveProgramQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode,string strTextTestDataContent, string strTextOutputFormatContent)
+        public void saveProgramQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string strTextTestDataContent, string strTextOutputFormatContent)
         {
             //All the questions need to store a record in QuestionIndex and QuestionMode table.
             //儲存一筆資料至QuestionIndex //###parameter "strAnswer" can be set to NULL in 程式題 
@@ -91,19 +96,11 @@ namespace PaperSystem
 
             //#######write your code below
 
-            // store question description 'strQuestion' to DB
-            //e.g., saveIntoQuestionAnswer_Question(strQID, strQuestion);
+            // save OutputFormatContent to a file and store question description 'strQuestion' and outputFormatFilePath to DB 
+            saveIntoProgram_Question(strQID, strQuestion, strTextOutputFormatContent);
 
-            // store correct answer 'strAnswer' to file 
-
-
-            // store Tesing data 'strTextTestDataContent' to file
-
-
-            // store output format 'strTextOutputFormatContent' to file
-
-
-
+            // store correct answer 'strAnswer' and Testing Data 'strTextTestDataContent' to file and record some description to DB
+            saveIntoProgram_Answer(strQID, strAnswer, strTextTestDataContent);
 
         }
         /// <summary>
@@ -112,29 +109,29 @@ namespace PaperSystem
         /// <param name="strQID"></param>
         /// <param name="strQuestion"></param>
         /// <param name="intLevel"></param>
-        public static void saveIntoPaper_TextQuestion(string strQID , string strQuestion,string strAnswer , int intLevel)
-		{
-			string strSQL = "";
-			strSQL = "SELECT * FROM Paper_TextQuestion WHERE cQID = '"+strQID+"' ";
-			SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
-			DataSet dsCheck = myDB.getDataSet(strSQL);
-			if(dsCheck.Tables[0].Rows.Count > 0)
-			{
-				//Update
-				strSQL = "UPDATE Paper_TextQuestion SET cQuestion = @cQuestion,cAnswer = @cAnswer , sLevel = '"+intLevel.ToString()+"' "+
-						 "WHERE cQID = '"+strQID+"' ";
-			}
-			else
-			{
-				//Insert
-				strSQL = "INSERT INTO Paper_TextQuestion (cQID , cQuestion, cAnswer , sLevel) "+
-						 "VALUES ('"+strQID+"' , @cQuestion,@cAnswer , '"+intLevel.ToString()+"') ";
-			}
-			dsCheck.Dispose();
+        public static void saveIntoPaper_TextQuestion(string strQID, string strQuestion, string strAnswer, int intLevel)
+        {
+            string strSQL = "";
+            strSQL = "SELECT * FROM Paper_TextQuestion WHERE cQID = '" + strQID + "' ";
+            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
+            DataSet dsCheck = myDB.getDataSet(strSQL);
+            if (dsCheck.Tables[0].Rows.Count > 0)
+            {
+                //Update
+                strSQL = "UPDATE Paper_TextQuestion SET cQuestion = @cQuestion,cAnswer = @cAnswer , sLevel = '" + intLevel.ToString() + "' " +
+                         "WHERE cQID = '" + strQID + "' ";
+            }
+            else
+            {
+                //Insert
+                strSQL = "INSERT INTO Paper_TextQuestion (cQID , cQuestion, cAnswer , sLevel) " +
+                         "VALUES ('" + strQID + "' , @cQuestion,@cAnswer , '" + intLevel.ToString() + "') ";
+            }
+            dsCheck.Dispose();
 
-			object[] pList = {strQuestion,strAnswer};
-			myDB.ExecuteNonQuery(strSQL,pList);
-		}
+            object[] pList = { strQuestion, strAnswer };
+            myDB.ExecuteNonQuery(strSQL, pList);
+        }
 
         /// <summary>
         /// 儲存一筆資料至QuestionIndex
@@ -142,7 +139,7 @@ namespace PaperSystem
         /// <param name="strQID"></param>
         /// <param name="strQuestion"></param>
         /// <param name="intLevel"></param>
-        public static void saveIntoQuestionIndex(string strQID, string strQuestion,string strAnswer, int intLevel)
+        public static void saveIntoQuestionIndex(string strQID, string strQuestion, string strAnswer, int intLevel)
         {
             string strSQL = "";
             strSQL = "SELECT * FROM QuestionIndex WHERE cQID = '" + strQID + "' ";
@@ -162,66 +159,72 @@ namespace PaperSystem
             }
             dsCheck.Dispose();
 
-            object[] pList = { strQuestion,strAnswer };
+            object[] pList = { strQuestion, (object)strAnswer ?? DBNull.Value };
             myDB.ExecuteNonQuery(strSQL, pList);
         }
 
         /// <summary>
-        /// 儲存一筆資料至QuestionAnswer_Question
+        /// 儲存一筆資料至Program_Question
         /// </summary>
         /// <param name="strQID"></param>
         /// <param name="strQuestion"></param>
-        public static void saveIntoQuestionAnswer_Question(string strQID, string strQuestion)
+        /// <param name="strTextOutputFormatContent"></param>
+        public void saveIntoProgram_Question(string strQID, string strQuestion, string strTextOutputFormatContent)
         {
             string strSQL = "";
-            strSQL = "SELECT * FROM QuestionAnswer_Question WHERE cQID = '" + strQID + "' ";
-            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
+            strSQL = "SELECT * FROM Program_Question WHERE cQID = '" + strQID + "' ";
+            string OutputFormatFilePath = saveOutputFormatContentToFile(strQID, strTextOutputFormatContent);
+            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstrCorrectStuHWDB"]);
             DataSet dsCheck = myDB.getDataSet(strSQL);
             if (dsCheck.Tables[0].Rows.Count > 0)
             {
                 //Update
-                strSQL = "UPDATE QuestionAnswer_Question SET cQuestion = @cQuestion " +
+                strSQL = "UPDATE Program_Question SET cQuestion = @cQuestion " +
                          "WHERE cQID = '" + strQID + "' ";
             }
             else
             {
                 //Insert
-                strSQL = "INSERT INTO QuestionAnswer_Question (cQID , cQuestion) " +
-                         "VALUES ('" + strQID + "' , @cQuestion ) ";
+                strSQL = "INSERT INTO Program_Question (cQID , cQuestion, OutputExample) " +
+                         "VALUES ('" + strQID + "' , @cQuestion ,@OutputExample) ";
             }
             dsCheck.Dispose();
 
-            object[] pList = { strQuestion };
+            object[] pList = { strQuestion, OutputFormatFilePath };
             myDB.ExecuteNonQuery(strSQL, pList);
         }
 
         /// <summary>
-        /// 儲存一筆資料至QuestionAnswer_Answer
+        /// 儲存一筆資料至Program_Answer
         /// </summary>
         /// <param name="strQID"></param>
         /// <param name="strAID"></param>
         /// <param name="strAnswer"></param>
-        public static void saveIntoQuestionAnswer_Answer(string strQID, string strAID, string strAnswer)
+        public void saveIntoProgram_Answer(string strQID, string strAnswer, string strTextTestDataContent)
         {
             string strSQL = "";
-            strSQL = "SELECT * FROM QuestionAnswer_Answer WHERE cQID = '" + strQID + "'";
-            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
+            string cAID = saveAnswerToFile(strQID, strAnswer);
+            string cAnswerFile = QuestionAnswerfilePath + @"correctAnswer";
+
+            saveTestDataToFile(strQID, strTextTestDataContent);
+            strSQL = "SELECT * FROM Program_Answer WHERE cQID = '" + strQID + "'";
+            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstrCorrectStuHWDB"]);
             DataSet dsCheck = myDB.getDataSet(strSQL);
             if (dsCheck.Tables[0].Rows.Count > 0)
             {
                 //Update
-                strSQL = "UPDATE QuestionAnswer_Answer SET cAnswer = @cAnswer " +
+                strSQL = "UPDATE Program_Answer SET cAnswer = @cAnswer_Input " +
                          "WHERE cQID = '" + strQID + "'";
             }
             else
             {
                 //Insert
-                strSQL = "INSERT INTO QuestionAnswer_Answer (cQID , cAID, cAnswer) " +
-                         "VALUES ('" + strQID + "' , '" + strAID + "', @cAnswer ) ";
+                strSQL = "INSERT INTO Program_Answer (cQID , cAID, cAnswer_Input) " +
+                         "VALUES ('" + strQID + "' , '" + cAID + "', @cAnswer_Input ) ";
             }
             dsCheck.Dispose();
 
-            object[] pList = { strAnswer };
+            object[] pList = { cAnswerFile };
             myDB.ExecuteNonQuery(strSQL, pList);
         }
 
@@ -266,5 +269,67 @@ namespace PaperSystem
             myDB.ExecuteNonQuery(strSQL, pList);
         }
 
-	}
+        /// <summary>
+        /// 將OutputfotmatContent存成檔案
+        /// </summary>
+        /// <param name="strQID"></param>
+        /// <param name="strTextOutputFormatContent"></param>
+        public string saveOutputFormatContentToFile(string strQID, string strTextOutputFormatContent)
+        {
+            string filepath = QuestionAnswerfilePath + @"outputFormat\" + strQID + @".txt";
+            StreamWriter example = new StreamWriter(filepath, false);
+            try
+            {
+                example.Write(strTextOutputFormatContent);
+            }
+            catch (Exception e)
+            {
+                //例外處理e.g.記錄錯誤
+            }
+            finally
+            {
+                example.Close();
+            }
+            return filepath;
+        }
+
+        /// <summary>
+        /// 將strAnswer存成檔案 回傳答案數量
+        /// </summary>
+        /// <param name="strQID"></param>
+        /// <param name="strAnswer"></param>
+        public string saveAnswerToFile(string strQID, string strAnswer)
+        {
+            string[] Answers = strAnswer.Split(new string[] { segmentsCut+ "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            int count = 1;
+            foreach (string Answer in Answers)
+            {
+                string filepath = QuestionAnswerfilePath + @"correctAnswer\" + strQID + @"-" + count + @".txt";
+                StreamWriter testinput = new StreamWriter(filepath, false);
+                testinput.Write(Answer);
+                testinput.Close();
+                count += 1;
+            }
+            return (count - 1).ToString();
+        }
+        /// <summary>
+        /// 將strTextTestDataContent存成檔案
+        /// </summary>
+        /// <param name="strQID"></param>
+        /// <param name="strTextTestDataContent"></param>
+        public void saveTestDataToFile(string strQID, string strTextTestDataContent)
+        {
+            string[] Answers = strTextTestDataContent.Split(new string[] { segmentsCut+"\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            int count = 1;
+            foreach (string Answer in Answers)
+            {
+                string filepath = QuestionAnswerfilePath + @"testinput\" + strQID + @"-" + count + @".txt";
+                StreamWriter testinput = new StreamWriter(filepath, false);
+                testinput.Write(Answer);
+                testinput.Close();
+                count += 1;
+            }
+        }
+    }
+
 }
