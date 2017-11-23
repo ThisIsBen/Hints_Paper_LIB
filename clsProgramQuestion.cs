@@ -194,6 +194,34 @@ namespace PaperSystem
             myDB.ExecuteNonQuery(strSQL, pList);
         }
 
+
+        public string getAllProgramTypeQuestion(string strGroupID)
+        {
+
+
+     
+            string strSQL = "SELECT * FROM Program_Question I, QuestionMode M WHERE  M.cQuestionGroupID = '" + strGroupID + "' AND I.cQID = M.cQID";
+            
+           
+            return strSQL;
+        }
+        public string getFeatureProgramQuestion(DataTable dtFeatureTextQuestionQID)
+        {
+            string strSQL = "";
+            if (dtFeatureTextQuestionQID.Rows.Count > 0)
+            {
+                strSQL += " SELECT * FROM Program_Question AS A INNER JOIN QuestionMode AS B ON A.cQID=B.cQID";
+                strSQL += " WHERE";
+                for (int i = 0; i < dtFeatureTextQuestionQID.Rows.Count; i++)
+                {
+                    if (i != 0)
+                        strSQL += " OR";
+                    strSQL += " A.cQID ='" + dtFeatureTextQuestionQID.Rows[i]["cQID"].ToString() + "'";
+                }
+            }
+            return strSQL;
+        }
+
         /// <summary>
         /// 儲存一筆資料至Program_Answer
         /// </summary>
