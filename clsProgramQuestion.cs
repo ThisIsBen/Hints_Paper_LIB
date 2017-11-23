@@ -174,7 +174,7 @@ namespace PaperSystem
             string strSQL = "";
             strSQL = "SELECT * FROM Program_Question WHERE cQID = '" + strQID + "' ";
             string OutputFormatFilePath = saveOutputFormatContentToFile(strQID, strTextOutputFormatContent);
-            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstrCorrectStuHWDB"]);
+            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
             DataSet dsCheck = myDB.getDataSet(strSQL);
             if (dsCheck.Tables[0].Rows.Count > 0)
             {
@@ -231,12 +231,12 @@ namespace PaperSystem
         public void saveIntoProgram_Answer(string strQID, string strAnswer, string strTextTestDataContent)
         {
             string strSQL = "";
-            string cAID = saveAnswerToFile(strQID, strAnswer);
+            string cTestingDataAmount = saveAnswerToFile(strQID, strAnswer);
             string cAnswerFile = QuestionAnswerfilePath + @"correctAnswer";
 
             saveTestDataToFile(strQID, strTextTestDataContent);
             strSQL = "SELECT * FROM Program_Answer WHERE cQID = '" + strQID + "'";
-            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstrCorrectStuHWDB"]);
+            SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
             DataSet dsCheck = myDB.getDataSet(strSQL);
             if (dsCheck.Tables[0].Rows.Count > 0)
             {
@@ -247,8 +247,8 @@ namespace PaperSystem
             else
             {
                 //Insert
-                strSQL = "INSERT INTO Program_Answer (cQID , cAID, cAnswer_Input) " +
-                         "VALUES ('" + strQID + "' , '" + cAID + "', @cAnswer_Input ) ";
+                strSQL = "INSERT INTO Program_Answer (cQID , cTestingDataAmount, cAnswer_Input) " +
+                         "VALUES ('" + strQID + "' , '" + cTestingDataAmount + "', @cAnswer_Input ) ";
             }
             dsCheck.Dispose();
 
