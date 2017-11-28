@@ -333,8 +333,13 @@ namespace PaperSystem
             foreach (string Answer in Answers)
             {
                 string filepath = QuestionAnswerfilePath + @"correctAnswer\" + strQID + @"-" + count + @".txt";
+                string reAnswer = Answer.Replace(":","\r\n");
+                string[] changeAnswer = reAnswer.Split(new string[] {"\r\n" }, StringSplitOptions.RemoveEmptyEntries);
                 StreamWriter testinput = new StreamWriter(filepath, false);
-                testinput.Write(Answer);
+                foreach (string a in changeAnswer)
+                {
+                    testinput.WriteLine(a);
+                }
                 testinput.Close();
                 count += 1;
             }
