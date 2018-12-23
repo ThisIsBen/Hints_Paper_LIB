@@ -2730,6 +2730,19 @@ namespace PaperSystem
             return "SELECT C.sSeq , T.cQID , T.cQuestion, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C ,Program_Question T , QuestionMode M WHERE C.cPaperID = '" + strPaperID + "' AND C.cQID = T.cQID AND   C.cQID = M.cQID ORDER BY sSeq ";
         }
 
+
+        /// <summary>
+        /// 取得某個問卷下的AITypeQuestion資料(From Paper_Content)
+        /// </summary>
+        /// <param name="strPaperID"></param>
+        /// <returns></returns>
+        public string getPaperAITypeQuestionContent(string strPaperID)
+        {
+            //return "SELECT C.sSeq , T.cQID , T.cQuestion,A.cAnswer, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C , QuestionAnswer_Question T , QuestionAnswer_Answer  A,QuestionMode M WHERE C.cPaperID = '" + strPaperID + "' AND C.cQID = T.cQID AND  C.cQID = A.cQID AND C.cQID = M.cQID ORDER BY sSeq ";
+            return "SELECT C.sSeq , T.cQID , T.cQuestion, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C ,AITypeQuestionCorrectAnswer T , QuestionMode M WHERE C.cPaperID = '" + strPaperID + "' AND C.cQID = T.cQID AND   C.cQID = M.cQID ORDER BY sSeq ";
+        }
+
+
         /// <summary>
         /// 取得某個問卷下的問答題資料(From Paper_Content)
         /// </summary>
