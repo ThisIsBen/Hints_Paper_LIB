@@ -356,7 +356,7 @@ namespace PaperSystem
             int Score = 0;
             string strSQL = " SELECT cQuestionScore FROM Paper_Content" +
                             " WHERE cQID = '" + strQID + "' AND cPaperID='" + strPaperID + "'";
-
+           
             SqlDB myDB = new SqlDB(System.Configuration.ConfigurationSettings.AppSettings["connstr"]);
             DataSet dsScore = myDB.getDataSet(strSQL);
             Score = int.Parse(dsScore.Tables[0].Rows[0][0].ToString());
@@ -2729,6 +2729,21 @@ namespace PaperSystem
             //return "SELECT C.sSeq , T.cQID , T.cQuestion,A.cAnswer, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C , QuestionAnswer_Question T , QuestionAnswer_Answer  A,QuestionMode M WHERE C.cPaperID = '" + strPaperID + "' AND C.cQID = T.cQID AND  C.cQID = A.cQID AND C.cQID = M.cQID ORDER BY sSeq ";
             return "SELECT C.sSeq , T.cQID , T.cQuestion, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C ,Program_Question T , QuestionMode M WHERE C.cPaperID = '" + strPaperID + "' AND C.cQID = T.cQID AND   C.cQID = M.cQID ORDER BY sSeq ";
         }
+
+
+        /// <summary>
+        /// 取得某個問卷下的AITypeQuestion資料(From Paper_Content)
+        /// </summary>
+        /// <param name="strPaperID"></param>
+        /// <returns></returns>
+        public string getPaperAITypeQuestionContent(string strPaperID)
+        {
+            //return "SELECT C.sSeq , T.cQID , T.cQuestion,A.cAnswer, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C , QuestionAnswer_Question T , QuestionAnswer_Answer  A,QuestionMode M WHERE C.cPaperID = '" + strPaperID + "' AND C.cQID = T.cQID AND  C.cQID = A.cQID AND C.cQID = M.cQID ORDER BY sSeq ";
+            return "SELECT C.sSeq , T.cQID , T.cQuestion, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C ,QuestionIndex T , QuestionMode M ,AITypeQuestionCorrectAnswer AITypeQuestion WHERE C.cPaperID ='" + strPaperID + "' AND  AITypeQuestion.cQID = C.cQID AND   AITypeQuestion.cQID = M.cQID  AND AITypeQuestion.cQID = T.cQID ORDER BY sSeq ";
+            
+            
+        }
+
 
         /// <summary>
         /// 取得某個問卷下的問答題資料(From Paper_Content)
