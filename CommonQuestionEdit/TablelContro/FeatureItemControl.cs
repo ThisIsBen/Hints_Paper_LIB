@@ -129,7 +129,8 @@ public class FeatureItemControl : Table
             lbFeatureTittle.Text = dtFeatureItemList.Rows[countFeature]["cNodeName"].ToString();
             
             ListBox listboxFeature = new ListBox();
-            //listboxFeature.ID = "lbxSelectFeature$" + dtFeatureItemList.Rows[countFeature]["cNodeID"].ToString() + countFeature.ToString();
+            //沒有打開會有An error has occurred because a control with id 'ctl   ' could not be located or a different control is assigned to the same ID after postback. If the ID is not assigned, explicitly set the ID property of controls that raise postback events to avoid this error.
+            listboxFeature.ID = "lbxSelectFeature$" + dtFeatureItemList.Rows[countFeature]["cNodeID"].ToString() + countFeature.ToString();
             listboxFeature.SelectionMode = ListSelectionMode.Multiple;
             //listboxFeature.Attributes["onclick"] = "lbxbox_SelectedIndexChange(this)";	
             listboxFeature.Font.Size = 16;
