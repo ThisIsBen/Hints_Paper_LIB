@@ -2427,6 +2427,16 @@ namespace PaperSystem
 
 
         /// <summary>
+        /// 取得某個組別下的所有Level 1的填空題
+        /// </summary>
+        /// <param name="strGroupID"></param>
+        /// <returns></returns>
+        public string getGroupFillOutBlankQuestion(string strGroupID)
+        {
+            return "SELECT * FROM FillOutBlank_Question I, QuestionMode M WHERE  M.cQuestionGroupID = '" + strGroupID + "' AND I.cQID = M.cQID";
+        }
+
+        /// <summary>
         /// 取得某個組別下的所有Level 1的問答題
         /// </summary>
         /// <param name="strGroupID"></param>
@@ -2437,13 +2447,35 @@ namespace PaperSystem
         }
 
         /// <summary>
+        /// 取得某些特徵條件下的所有的填空題
+        /// </summary>
+        /// <param name="strGroupID"></param>
+        /// <returns></returns>
+        public string getFeatureFillOutBlankQuestion(DataTable dtFeatureTextQuestionQID)
+        {
+            string strSQL="";
+            if (dtFeatureTextQuestionQID.Rows.Count > 0)
+            {
+                strSQL += " SELECT * FROM FillOutBlank_Question AS A INNER JOIN QuestionMode AS B ON A.cQID=B.cQID";
+                strSQL += " WHERE";
+                for (int i = 0; i < dtFeatureTextQuestionQID.Rows.Count; i++)
+                {
+                    if (i != 0)
+                        strSQL += " OR";
+                    strSQL += " A.cQID ='" + dtFeatureTextQuestionQID.Rows[i]["cQID"].ToString() + "'";
+                }
+            }
+            return strSQL;
+        }
+
+        /// <summary>
         /// 取得某些特徵條件下的所有的問答題
         /// </summary>
         /// <param name="strGroupID"></param>
         /// <returns></returns>
         public string getFeatureTextQuestion(DataTable dtFeatureTextQuestionQID)
         {
-            string strSQL="";
+            string strSQL = "";
             if (dtFeatureTextQuestionQID.Rows.Count > 0)
             {
                 strSQL += " SELECT * FROM QuestionAnswer_Question AS A INNER JOIN QuestionMode AS B ON A.cQID=B.cQID";
@@ -2457,7 +2489,6 @@ namespace PaperSystem
             }
             return strSQL;
         }
-
 
         /// <summary>
         /// 取得simulation下的所有Level 1的問答題
@@ -2742,6 +2773,17 @@ namespace PaperSystem
             return "SELECT C.sSeq , T.cQID , T.cQuestion, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C ,QuestionIndex T , QuestionMode M ,AITypeQuestionCorrectAnswer AITypeQuestion WHERE C.cPaperID ='" + strPaperID + "' AND  AITypeQuestion.cQID = C.cQID AND   AITypeQuestion.cQID = M.cQID  AND AITypeQuestion.cQID = T.cQID ORDER BY sSeq ";
             
             
+        }
+
+
+        /// <summary>
+        /// 取得某個問卷下的填空題資料(From Paper_Content)
+        /// </summary>
+        /// <param name="strPaperID"></param>
+        /// <returns></returns>
+        public string getPaperFillOutBlankContent(string strPaperID)
+        {
+            return "SELECT C.sSeq , T.cQID , T.cQuestion,A.cAnswer, M.cDivisionID , M.cQuestionGroupID , M.cQuestionGroupName , M.cQuestionMode , M.cQuestionType FROM Paper_Content C ,FillOutBlank_Question T , FillOutBlank_Answer  A,QuestionMode M WHERE C.cPaperID = '" + strPaperID + "' AND C.cQID = T.cQID AND  C.cQID = A.cQID AND C.cQID = M.cQID ORDER BY sSeq ";
         }
 
 
