@@ -52,7 +52,7 @@ namespace PaperSystem
         /// <param name="strQuestionDivisionID"></param>
         /// <param name="strQuestionGroupID"></param>
         /// <param name="strQuestionMode"></param>
-        public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string templateQuestionQID)
+        public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string templateQuestionQID, bool bWithSelectionOptions, string strDomain)
         //ben 
         //public void saveQuestionAnswer(string strQID, string strAID, string strQuestion, string strAnswer, string strUserID, string strPaperID, string strQuestionDivisionID, string strQuestionGroupID, string strQuestionMode, string templateQuestionQID = null)
         {
@@ -60,12 +60,12 @@ namespace PaperSystem
             saveIntoQuestionIndex(strQID, strQuestion, strAnswer, 1);
 
             //儲存一筆資料至QuestionAnswer_Question
-            saveIntoQuestionAnswer_Question(strQID, strQuestion);
+            saveIntoQuestionAnswer_Question(strQID, strQuestion, bWithSelectionOptions, strDomain);
 
             //儲存一筆資料至QuestionAnswer_Answer
             saveIntoQuestionAnswer_Answer(strQID, strAID, strAnswer);
 
-            //儲存一筆資料至QuestionMode
+            //儲存一筆資料至QuestionModeㄝ
             SQLString mySQL = new SQLString();
 
             //the cQuestionType will be 10 for fillOutBlank question.
@@ -167,7 +167,7 @@ namespace PaperSystem
         /// </summary>
         /// <param name="strQID"></param>
         /// <param name="strQuestion"></param>
-        public static void saveIntoQuestionAnswer_Question(string strQID, string strQuestion)
+        public static void saveIntoQuestionAnswer_Question(string strQID, string strQuestion, bool bWithSelectionOptions, string strDomain )
         {
             string strSQL = "";
             strSQL = "SELECT * FROM FillOutBlank_Question WHERE cQID = '" + strQID + "' ";
@@ -176,14 +176,14 @@ namespace PaperSystem
             if (dsCheck.Tables[0].Rows.Count > 0)
             {
                 //Update
-                strSQL = "UPDATE FillOutBlank_Question SET cQuestion = @cQuestion " +
+                strSQL = "UPDATE FillOutBlank_Question SET cQuestion = @cQuestion " + ", bWithSelectionOptions = '" + bWithSelectionOptions + "' " + ", cDomain = '" + strDomain + "' " +
                          "WHERE cQID = '" + strQID + "' ";
             }
             else
             {
                 //Insert
-                strSQL = "INSERT INTO FillOutBlank_Question (cQID , cQuestion) " +
-                         "VALUES ('" + strQID + "' , @cQuestion ) ";
+                strSQL = "INSERT INTO FillOutBlank_Question (cQID , cQuestion, bWithSelectionOptions, cDomain) " +
+                         "VALUES ('" + strQID + "' , @cQuestion , '" + bWithSelectionOptions + "', '" + strDomain + "') "; 
             }
             dsCheck.Dispose();
 
